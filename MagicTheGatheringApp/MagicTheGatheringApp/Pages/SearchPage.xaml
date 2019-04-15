@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MagicTheGatheringApp.Pages.SearchPage">
+  <ContentPage.Content>
+    <StackLayout>
+      <SearchBar x:Name="searchBar"
+                 Placeholder="Card Name"
+                 SearchButtonPressed="SearchBar_SearchButtonPressed"/>
+      <Entry x:Name="cardType" Placeholder="Card Types"/>
+      <Entry x:Name="cardText" Placeholder="Card Text"/>
+      <ListView x:Name="searchResult" ItemTapped="SearchResult_ItemTapped"/>
+    </StackLayout>
+  </ContentPage.Content>
+</ContentPage>

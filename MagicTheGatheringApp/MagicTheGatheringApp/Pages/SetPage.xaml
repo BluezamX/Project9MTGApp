@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MagicTheGatheringApp.Pages.SetPage">
+  
+  <ContentPage.Content>
+    <StackLayout>
+      <Button x:Name="UpdateButton"
+                    Text="Update"
+                    Command="{Binding updateCommand}"/>
+
+      <ListView x:Name="MyListView"
+                      ItemsSource="{Binding Items}"
+                      ItemTapped="Handle_ItemTapped"
+                      CachingStrategy="RecycleElement">
+        <!--Built in Cells-->
+      </ListView>
+    </StackLayout>
+  </ContentPage.Content>
+</ContentPage>
