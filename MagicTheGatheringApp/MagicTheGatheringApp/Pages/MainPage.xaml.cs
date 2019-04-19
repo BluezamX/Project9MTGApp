@@ -14,6 +14,10 @@ namespace MagicTheGatheringApp.Pages
 
     private void Startup()
     {
+      ToolbarItems.Add(new ToolbarItem("Search", "", () =>
+      {
+        App.navPage.PushAsync(new SearchPage());
+      }));
       var btnList = new List<ButtonObject> {
         new ButtonObject("Expansion"),
         new ButtonObject("Core"),
@@ -23,6 +27,7 @@ namespace MagicTheGatheringApp.Pages
         new ButtonObject("Promo"),
         new ButtonObject("Silver Border")
       };
+
       buttonList.Children.Clear();
       foreach (var item in btnList)
       {

@@ -21,6 +21,7 @@ namespace MagicTheGatheringApp.Models.MTG
     public string manacost { get; set; }
     public float cmc { get; set; }
     public string loyalty { get; set; }
+    public string clusterNo { get; set; }
 
     public Card() { }
 
@@ -40,6 +41,7 @@ namespace MagicTheGatheringApp.Models.MTG
       toughness = _toughness;
       loyalty = _loyalty;
       id = _id;
+      clusterNo = "cluster: ";
     }
   }
 }

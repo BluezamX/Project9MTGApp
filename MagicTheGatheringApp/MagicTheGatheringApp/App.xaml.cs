@@ -19,8 +19,8 @@ namespace MagicTheGatheringApp
       });
 
     public static Card clusterCard = new Card();
-    public static string dataY = "power";
-    public static string dataX = "toughness";
+    public static string dataY = "toughness";
+    public static string dataX = "power";
     public static  List<ClusterObject> clusters;
 
     public App()

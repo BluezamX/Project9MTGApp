@@ -36,6 +36,7 @@ namespace MagicTheGatheringApp.Pages
       {
         App.navPage.PushAsync(new SearchPage());
       }));
+
       MyListView.ItemTemplate = new DataTemplate(typeof(CardViewCell));
       foreach (Card card in cards)
       {
@@ -51,7 +52,7 @@ namespace MagicTheGatheringApp.Pages
 
       CardPage ci = new CardPage((Card)e.Item);
       ci.WidthRequest = Application.Current.MainPage.Width;
-      ci.HeightRequest = Application.Current.MainPage.Width * 1.4;
+      ci.HeightRequest = Application.Current.MainPage.Width * 1.2;
       await App.navPage.PushAsync(ci);
 
       //Deselect Item

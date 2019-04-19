@@ -7,7 +7,7 @@ namespace MagicTheGatheringApp.Managers
 {
   public class ClusterManager
   {
-    public static void Begin(List<ClusterObject> data, string[] types, int clusterCount, int iterations)
+    public static KMeansResults Begin(List<ClusterObject> data, int numCluster, int iterations)
     {
       System.Diagnostics.Debug.WriteLine("Begin clustering");
 
@@ -17,15 +17,16 @@ namespace MagicTheGatheringApp.Managers
       //float[][] data = ProcessRawData(rawData, types);
 
       ShowData(data);
-
       System.Diagnostics.Debug.WriteLine("Amount of clusters: " + iterations);
 
-      KMeansResults result = Clustering(data, clusterCount, iterations);
+      KMeansResults result = Clustering(data, numCluster, iterations);
 
       System.Diagnostics.Debug.WriteLine("Operations complete.");
+      ShowKMeans(result);
+      return result;
     }
 
-    private static KMeansResults Clustering(List<ClusterObject> rawData, int clusterCount, int iterations)
+    private static KMeansResults Clustering(List<ClusterObject> rawData, int numCluster, int iterations)
     {
       double[][] data = ProcessData(rawData);
 
@@ -36,33 +37,44 @@ namespace MagicTheGatheringApp.Managers
       int numAttributes = 8;
 
       // Start with random initial Cluster assignment
-      int[] clustering = InitializeClustering(numData, clusterCount);
+      int[] clustering = InitializeClustering(numData, numCluster);
 
       // Create Cluster means and centroids
-      double[][] means = CreateMatrix(clusterCount, numAttributes);
-      int[] centroidIdx = new int[clusterCount];
-      int[] clusterItemCount = new int[clusterCount];
+      double[][] means = CreateMatrix(numCluster, numAttributes);
+      int[] centroidIdx = new int[numCluster];
+      int[] clusterItemCount = new int[numCluster];
 
       // Perform clustering
       while (hasChanges && currentIteration < iterations)
       {
-        clusterItemCount = new int[clusterCount];
-        totalDistance = CalcClusteringInfo(data, clustering, ref means, ref centroidIdx, clusterCount, ref clusterItemCount);
+        System.Diagnostics.Debug.WriteLine("\nIterate\n");
+        clusterItemCount = new int[numCluster];
+        totalDistance = CalcClusteringInfo(data, clustering, ref means, ref centroidIdx, numCluster, ref clusterItemCount);
 
-        hasChanges = AssignClustering(data, clustering, centroidIdx, clusterCount);
+        hasChanges = AssignClustering(data, clustering, centroidIdx, numCluster);
         currentIteration++;
       }
 
       // Creation of final clusters
-      ClusterObject[][] clusters = new ClusterObject[clusterCount][];
+      ClusterObject[][] clusters = new ClusterObject[numCluster][];
       for (int k = 0; k < clusters.Length; k++)
         clusters[k] = new ClusterObject[clusterItemCount[k]];
 
-      int[] clustersCurIdx = new int[clusterCount];
+      int[] clustersCurIdx = new int[numCluster];
       for (int i = 0; i < clustering.Length; i++)
       {
-        clusters[clustering[i]][clustersCurIdx[clustering[i]]] = rawData[i];
-        clustersCurIdx[clustering[i]]++;
+        try
+        {
+          int clusterValue = clustering[i];
+          int idxValue = clustersCurIdx[clusterValue];
+
+          clusters[clusterValue][idxValue] = rawData[i];
+          clustersCurIdx[clusterValue]++;
+        }
+        catch (Exception ex)
+        {
+          System.Diagnostics.Debug.WriteLine("" + i + ex);
+        }
       }
 
       return new KMeansResults(clusters, means, centroidIdx, totalDistance);
@@ -194,24 +206,49 @@ namespace MagicTheGatheringApp.Managers
     {
       for (int i = 0; i < data.Count; ++i)
       {
-        System.Diagnostics.Debug.WriteLine(data[i].cardName + " : " + data[i].name + " : " + data[i].cost + " : " + data[i].type + " : " + data[i].effect + " : " + data[i].keyword + " : " + data[i].power + " : " + data[i].toughness + " : " + data[i].loyalty + " : " + data[i].average);
+        if (data != null)
+          System.Diagnostics.Debug.WriteLine(data[i].cardName + " : " + data[i].name + " : " + data[i].cost + " : " + data[i].type + " : " + data[i].effect + " : " + data[i].keyword + " : " + data[i].power + " : " + data[i].toughness + " : " + data[i].loyalty + " : " + data[i].average);
+      }
+    }
+
+    private static void ShowKMeans(KMeansResults data)
+    {
+      for (int i = 0; i < data.clusters.Length; ++i)
+      {
+        System.Diagnostics.Debug.WriteLine("\n\nCluster" + i + ": ");
+        for (int j = 0; j < data.clusters[i].Length; j++)
+        {
+          if (data.clusters[i][j] != null)
+            System.Diagnostics.Debug.WriteLine(data.clusters[i][j].cardName + " : " + data.clusters[i][j].name + " : " + data.clusters[i][j].cost + " : " + data.clusters[i][j].type + " : " + data.clusters[i][j].effect + " : " + data.clusters[i][j].keyword + " : " + data.clusters[i][j].power + " : " + data.clusters[i][j].toughness + " : " + data.clusters[i][j].loyalty + " : " + data.clusters[i][j].average);
+        }
       }
     }
   }
 
   public class KMeansResults
   {
-    public ClusterObject[][] clusters { get; private set; }
-    public double[][] means { get; private set; }
-    public int[] centroids { get; private set; }
-    public double totalDistance { get; private set; }
+    public ClusterObject[][] clusters { get; set; }
+    public double[][] means { get; set; }
+    public int[] centroids { get; set; }
+    public double totalDistance { get; set; }
 
     public KMeansResults(ClusterObject[][] cl, double[][] m, int[] ce, double t)
     {
-      clusters = cl;
-      means = m;
-      centroids = ce;
-      totalDistance = t;
+      try
+      {
+        clusters = cl.OrderBy(x => x.Average(y => y.power + y.toughness)).ToArray();
+        means = m;
+        centroids = ce;
+        totalDistance = t;
+      }
+      catch (Exception ex)
+      {
+        System.Diagnostics.Debug.WriteLine("\n\n\n"+ ex + "\n" + cl.Length + "\n\n\n");
+        clusters = cl;
+        means = m;
+        centroids = ce;
+        totalDistance = t;
+      }
     }
   }
 }

@@ -132,5 +132,13 @@ namespace MagicTheGatheringApp.Managers
         return db.Table<Card>().Where(x => x.set == code).ToList();
       }
     }
+
+    public static Card GetCard(string cardname)
+    {
+      using (SQLiteConnection db = new SQLiteConnection(dbPath))
+      {
+        return db.Table<Card>().Where(x => x.name == cardname).First();
+      }
+    }
   }
 }

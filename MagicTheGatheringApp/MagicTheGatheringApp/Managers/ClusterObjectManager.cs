@@ -7,34 +7,28 @@ namespace MagicTheGatheringApp.Managers
   {
     // All scales go from 0-16
 
-    public static List<ClusterObject> Cluster(Card ogCard, MTGSet[] sets)
+    public static List<ClusterObject> Cluster(Card ogCard, MTGSet set)
     {
       int totalCardCount = 0;
-      foreach (MTGSet set in sets)
-      {
-        totalCardCount += DatabaseManager.GetCards(set).Count;
-      }
+      totalCardCount = DatabaseManager.GetCards(set).Count;
 
       List<ClusterObject> toReturn = new List<ClusterObject>();
 
-      foreach (MTGSet set in sets)
+      foreach (Card card in DatabaseManager.GetCards(set))
       {
-        foreach (Card card in DatabaseManager.GetCards(set))
-        {
-          toReturn.Add(new ClusterObject
-            (
-            card.name,
-            FillName(ogCard, card),
-            FillCost(ogCard, card),
-            FillType(ogCard, card),
-            FillKeyword(ogCard, card),
-            FillEffect(ogCard, card),
-            FillPower(ogCard, card),
-            FillToughness(ogCard, card),
-            FillLoyalty(ogCard, card)
-            )
-          );
-        }
+        toReturn.Add(new ClusterObject
+          (
+          card.name,
+          FillName(ogCard, card),
+          FillCost(ogCard, card),
+          FillType(ogCard, card),
+          FillKeyword(ogCard, card),
+          FillEffect(ogCard, card),
+          FillPower(ogCard, card),
+          FillToughness(ogCard, card),
+          FillLoyalty(ogCard, card)
+          )
+        );
       }
 
       return toReturn;
